@@ -131,3 +131,5 @@ $ pip install keras
 $ pip install pandas
 
 -----------
+
+https://qengineering.eu/install-tensorflow-2.2.0-on-raspberry-pi-4.html
