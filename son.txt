@@ -1,3 +1,20 @@
+OpenCV 설치
+$ sudo raspi-config
+=> 7 Advanced Options 선택 => A1 Expand File System 선택
+$ sudo reboot
+$ sudo apt-get update && sudo apt-get upgrade
+$ sudo apt-get install build-essential cmake pkg-config
+$ sudo apt-get install libjpeg-dev libtiff5-dev libjasper-dev libpng-dev
+$ sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
+$ sudo apt-get install libxvidcore-dev libx264-dev
+$ sudo apt-get install libfontconfig1-dev libcairo2-dev
+$ sudo apt-get install libgdk-pixbuf2.0-dev libpango1.0-dev
+$ sudo apt-get install libgtk2.0-dev libgtk-3-dev
+$ sudo apt-get install libatlas-base-dev gfortran
+$ sudo apt-get install libhdf5-dev libhdf5-serial-dev libhdf5-103
+$ sudo apt-get install libqtgui4 libqtwebkit4 libqt4-test python3-pyqt5
+$ sudo apt-get install python3-dev
+
 /* PIP 재설치 */
 $ wget https://bootstrap.pypa.io/get-pip.py
 $ sudo python get-pip.py
@@ -11,35 +28,8 @@ $ python3
 >>> quit()
 /* 정상적으로 cv2가 import 되면 성공 */
 
-/* VirtualEnv 설치 */
-$ sudo pip3 install virtualenv virtualenvwrapper
-$ cd ~
-$ geany ~/.bashrc &
-/* 에디터에서 맨 아래에 아래 6줄 추가 */
-export WORKON_HOME=$HOME/.virtualenvs
-export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
-VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
-export PATH=/usr/local/bin:$PATH
-source /usr/local/bin/virtualenvwrapper.sh
-export VIRTUALENVWRAPPER_ENV_BIN_DIR=bin
-/* 추가 후 저장 */
-$ source ~/.bashrc
+sudo pip install ”picamera[array]”
 
-/* 가상환경 “cv” 만들기 */
-$ mkvirtualenv cv -p python3
-/* 위 명령은 “cv”라는 이름의 가상환경 만듬. “cv” 대신 다른 이름 가능 */
-/* cv 이름의 가상 환경 시작 */
-$ workon cv
-/* 가상 환경에서 필요한 패키지 설치하고 작업 */
-/* 가상환경에서 나가기 */
-(cv) $ deactivate
-/* 가상환경 “cv” 제거 */
-$ rmvirtualenv cv
-
-$ sudo pip install ”picamera[array]”
-$
-------
-정지영상 캡쳐 테스트
 # import the necessary packages
 from picamera.array import PiRGBArray
 from picamera import PiCamera
@@ -56,8 +46,7 @@ image = rawCapture.array
 # display the image on screen and wait for a keypress
 cv2.imshow("Image", image)
 cv2.waitKey(0)
-----------------
-동영상 테스트
+
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 import time
@@ -81,14 +70,14 @@ rawCapture.truncate(0)
 # if the `q` key was pressed, break from the loop
 if key == ord("q"):
 break
-----------------------
-딥러닝 패키지 설치
+
 $ sudo pip install matplotlib numpy
 $ sudo pip install gfortran libblas-dev liblapack-dev
 $ sudo pip install scipy
 $ sudo pip install scikit-learn
 $ sudo pip install pip install git+git://github.com/google/skflow.git
 
+1-------
 $ sudo apt-get install python3-numpy
 $ sudo apt-get install libblas-dev
 $ sudo apt-get install liblapack-dev
@@ -106,6 +95,9 @@ $ pip install tensorflow
 $ pip install keras
 $ pip install pandas
 
+2---
+– https://qengineering.eu/install-tensorflow-2.2.0-on-raspberry-p
+i-4.html
 # get a fresh start
 $ sudo apt-get update
 $ sudo apt-get upgrade
@@ -133,68 +125,9 @@ Ol51MPg
 # install TensorFlow
 $ sudo -H pip3 install tensorflow-2.2.0-cp37-cp37m-linux_armv7l.whl
 
-Cannot uninstall ‘wrapt’… 에러가 나는 경우 아래 명령으로 업그레이드 후 다시 실행
 $ sudo pip install wrapt --upgrade --ignore-installed
 
 $ pip install keras
 $ pip install pandas
 
---------------------
-
-sudo apt-get install build-essential cmake -y
-sudo apt-get install libjpeg-dev libtiff5-dev libjasper-dev libpng12-dev -y
-sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libxvidcore-dev libx264-dev libxine2-dev -y
-sudo apt-get install libv4l-dev v4l-utils -y
-sudo apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev -y
-sudo apt-get install libgtk2.0-dev -y
-sudo apt-get install mesa-utils libgl1-mesa-dri libgtkgl2.0-dev libgtkglext1-dev -y
-sudo apt-get install libatlas-base-dev gfortran libeigen3-dev -y
-sudo apt-get install python2.7-dev python3-dev python-numpy python3-numpy -y
-
-mkdir opencv
-cd opencv
-wget -O opencv.zip https://github.com/opencv/opencv/archive/4.1.2.zip
-unzip opencv.zip
-wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/4.1.2.zip
-unzip opencv_contrib.zip
-
-cd opencv-4.1.2
-mkdir build
-cd build
-cmake -D CMAKE_BUILD_TYPE=RELEASE \
--D CMAKE_INSTALL_PREFIX=/usr/local \
--D WITH_TBB=OFF \
--D WITH_IPP=OFF \
--D WITH_1394=OFF \
--D BUILD_WITH_DEBUG_INFO=OFF \
--D BUILD_DOCS=OFF \
--D INSTALL_C_EXAMPLES=ON \
--D INSTALL_PYTHON_EXAMPLES=ON \
--D BUILD_EXAMPLES=OFF \
--D BUILD_TESTS=OFF \
--D BUILD_PERF_TESTS=OFF \
--D ENABLE_NEON=ON \
--D ENABLE_VFPV3=ON \
--D WITH_QT=OFF \
--D WITH_GTK=ON \
--D WITH_OPENGL=ON \
--D OPENCV_ENABLE_NONFREE=ON \
--D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-4.1.2/modules \
--D WITH_V4L=ON \
--D WITH_FFMPEG=ON \
--D WITH_XINE=ON \
--D ENABLE_PRECOMPILED_HEADERS=OFF \
--D BUILD_NEW_PYTHON_SUPPORT=ON \
--D OPENCV_GENERATE_PKGCONFIG=ON ../
-
-sudo nano /etc/dphys-swapfile
-sudo /etc/init.d/dphys-swapfile restart
-make -j4
-sudo make install
-sudo ldconfig
-sudo nano /etc/dphys-swapfile
-sudo /etc/init.d/dphys-swapfile restart
-
-sudo nano video.py
-sudo nano /usr/local/share/opencv4/samples/python/video.py
-
+-----------
