@@ -1,0 +1,250 @@
+import RPi.GPIO as gpio #Use the GPIO module of RPi
+import time #Use time module
+gpio.setmode(gpio.BCM) #Works with gpio in BCM(Broadcom chip-specific
+pin numbers mode)
+sound = 21 # Physical 40
+print(“start sound sensor”)
+gpio.setup(sound, gpio.IN) #Set sound digital output pin to IN
+try: #for Exception
+while True:
+if gpio.input(sound) == 1:
+print(“Sound detected!”)
+else:
+print(“No sound detected!”)
+time.sleep(0.5)
+except:
+gpio.cleanup()
+
+/* sound.c */
+#include <stdio.h>
+#include <wiringPi.h>
+#define SOUND 29 // BCM 21 // physical pin 40
+int main(void) {
+if (wiringPiSetup() == -1) {
+return 1;
+}
+pinMode(SOUND, INPUT);
+while (1) {
+if (digitalRead(SOUND) == 1)
+printf(“Sound detected\n”);
+else
+printf(“No sound detected\n”);
+delay(500);
+}
+return 0;
+}
+
+import RPi.GPIO as gpio #Use the GPIO module of RPi
+import time #Use time module
+gpio.setmode(gpio.BCM) #Works with gpio in BCM(Broadcom chip-specific pin
+numbers mode)
+pir = 23
+print(“start ultrasonic sensor”)
+gpio.setup(pir, gpio.IN) #Set pir pin to IN
+try: #for Exception
+while True:
+if gpio.input(pir) == 1:
+print(“Object detected!”)
+else:
+print(“Not detected!”)
+time.sleep(1)
+except:
+gpio.cleanup()
+
+/* infraRed.c */
+#include <stdio.h>
+#include <wiringPi.h>
+#define PIR 4 //BCM 23
+int main(void) {
+if (wiringPiSetup() == -1) {
+return 1;
+}
+pinMode(PIR, INPUT);
+while (1) {
+if (digitalRead(PIR) == 1)
+printf(“Detected\n”);
+else
+printf(“Not detected\n”);
+delay(1000);
+}
+return 0;
+}
+------
+sudo apt-get update
+• sudo apt-get install build-essential python-dev
+• git clone
+https://github.com/adafruit/Adafruit_Python_DHT.git
+– username: embeddedUOS, passwd: asdf1234
+• cd Adafruit_Python_DHT
+• sudo python setup.py install
+---------
+#include <wiringPi.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#define MAXTIMINGS 83
+#define DHTPIN 4
+int dht11_dat[5] = {0, } ;
+void read_dht11_dat()
+{
+uint8_t laststate = HIGH ;
+uint8_t counter = 0 ;
+uint8_t j = 0, i ;
+uint8_t flag = HIGH ;
+uint8_t state = 0 ;
+float f ;
+dht11_dat[0] = dht11_dat[1] = dht11_dat[2] = dht11_dat[3] =
+dht11_dat[4] = 0 ;
+pinMode(DHTPIN, OUTPUT) ;
+digitalWrite(DHTPIN, LOW) ;
+delay(18) ;
+digitalWrite(DHTPIN, HIGH) ;
+delayMicroseconds(30) ;
+pinMode(DHTPIN, INPUT) ;
+
+for (i = 0; i < MAXTIMINGS; i++) {
+counter = 0 ;
+while ( digitalRead(DHTPIN) == laststate) {
+counter++ ;
+delayMicroseconds(1) ;
+if (counter == 200) break ;
+}
+laststate = digitalRead(DHTPIN) ;
+if (counter == 200) break ; // if while breaked by timer, break
+for
+if ((i >= 4) && (i % 2 == 0)) {
+dht11_dat[j / 8] <<= 1 ;
+if (counter > 20) dht11_dat[j / 8] |= 1 ;
+j++ ;
+}
+}
+if ((j >= 40) && (dht11_dat[4] == ((dht11_dat[0] + dht11_dat[1]
++ dht11_dat[2] + dht11_dat[3]) & 0xff))) {
+printf("humidity = %d.%d %% Temperature = %d.%d *C \n",
+dht11_dat[0], dht11_dat[1], dht11_dat[2], dht11_dat[3]) ;
+}
+else printf("Data get failed\n") ;
+}
+int main(void)
+{
+printf("dht11 Raspberry pi\n") ;
+if (wiringPiSetup() == -1) exit(1) ;
+while (1) {
+read_dht11_dat() ;
+delay(1000) ;
+}
+return 0 ;
+}
+--------------
+dht11_example.py
+
+#dht11_example.py
+import RPi.GPIO as GPIO
+import dht11 #use this class
+import time
+import datetime
+# initialize GPIO
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+GPIO.cleanup()
+# read data using pin 23
+instance = dht11.DHT11(pin=23)
+while True:
+result = instance.read()
+if result.is_valid():
+print("Last valid input: " + str(datetime.datetime.now()))
+print("Temperature: %d C" % result.temperature)
+print("Humidity: %d %%" % result.humidity)
+time.sleep(1)
+
+-----------
+from picamera import PiCamera
+from time import sleep
+camera = PiCamera()
+camera.start_preview() #카메라 미리보기 시작
+sleep(5) #5초 뒤 촬영
+#python library의 capture 메소드에서 use_video_port가 false인 경우
+#이미지 인코딩 과정에서 에러가 발생할 수 있음
+camera.capture(‘/home/pi/image.jpeg’, use_video_port = True)
+camera.stop_preview()
+camera.close()
+
+from picamera import PiCamera
+from time import sleep
+camera = PiCamera()
+camera.start_preview() #카메라 미리보기 시작
+camera.start_recording(‘./video.h264’)
+sleep(5) #5초 동안 촬영
+camera.stop_recording()
+camera.stop_preview()
+camera.close()
+
+
+
+from picamera import PiCamera
+from time import sleep
+camera = PiCamera()
+camera.resolution = (1800, 1600)
+camera.framerate = 15
+camera.start_preview()
+sleep(5)
+camera.capture(‘/home/pi/resolution.jpeg’, use_video_port = True)
+camera.stop_preview()
+camera.close()
+
+from picamera import PiCamera Color
+from time import sleep
+camera = PiCamera()
+camera.annotate_text_size = 100
+camera.annotate_background = Color(‘black’)
+camera.annotate_foreground = Color(‘white’)
+camera.start_preview()
+for i in range(5):
+j = 5 - i
+camera.annotate_text = “%s” % i
+sleep(1)
+camera.annotate_text = “”
+camera.capture(‘/home/pi/count.jpg’, use_video_port = True)
+camera.stop_preview()
+camera.close()
+
+from picamera import PiCamera
+from time import sleep
+camera = PiCamera()
+camera.start_preview()
+for i in range (100):
+camera.annotate_text = “Brightness: %s” % i
+camera.brightness = i
+sleep(0.1)
+camera.stop_preview()
+camera.close
+
+from picamera import PiCamera
+from time import sleep
+camera = PiCamera()
+camera.start_preview()
+for i in range (100):
+camera.annotate_text = “Contrast: %s” % i
+camera.contrast = i
+sleep(0.1)
+camera.stop_preview()
+camera.close
+
+from picamera import PiCamera
+from time import sleep
+camera = PiCamera()
+camera.start_preview()
+for effect in camera.IMAGE_EFFECTS:
+camera.image_effect = effect
+camera.annotate_text = “Effect: %s” % effect
+sleep(5)
+camera.capture(“./Eff_%s.jpg” % effect, use_video_port = True)
+camera.stop_preview()
+camera.close()
+
+$ mkdir helloflask
+• $ cd ./helloflask
+• $ mkdir templates static
+• $ mkdir static/css static/js static/img
+• $ > routes.py (빈 파이썬 파일 생성)
+
