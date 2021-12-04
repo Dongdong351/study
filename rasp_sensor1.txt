@@ -1,0 +1,131 @@
+import RPi.GPIO as gpio #Use the GPIO module of RPi
+import time #Use time module
+PIN = 7 # BCM: pin 4
+gpio.setmode(gpio.BOARD)
+gpio.setup(PIN, gpio.OUT)
+print(”Press (CTRL-c) to exit)”)
+try:
+while True:
+gpio.output(PIN, True)
+time.sleep(0.1)
+gpio.output(PIN,False)
+time.sleep(0.1)
+except KeyboardInterrupt:
+gpio.cleanup()
+
+#include <stdio.h>
+#include <wiringPi.h> // include wiringPi library
+#define LED 7 // BCM: pin 4
+int main(void) {
+if (wiringPiSetup() == -1 ) { //init pin set
+printf(“Error occurred!\n”);
+return -1;
+}
+pinMode(LED, OUTPUT); // set LED to OUT
+while (1) {
+digitalWrite(LED, 1); //set LED HIGH
+delay(1000);
+digitalWrite(LED, 0); //set LED LOW
+delay(1000);
+}
+return 0;
+}
+
+
+gcc -o led led.c -lwiringPi
+./led
+
+#include <stdio.h>
+#include <wiringPi.h> // include wiringPi library
+#define SW 7 // BCM: pin 4
+int main(void) {
+if (wiringPiSetup() == -1 ) { //init pin set
+printf(“Error occurred!\n”);
+return -1;
+}
+pinMode(SW, INPUT); // set SW to IN
+//Continued on the back
+while (1) {
+if (digitalRead(SW) == 0) {
+printf(“Button pressed\n”);
+delay(1000);
+printf(“Press (CTRL-c) to exit\n”);
+}
+}
+return 0;
+}
+
+
+import RPi.GPIO as gpio #Use the GPIO module of RPi
+import time #Use time module
+gpio.setmode(gpio.BCM)
+gpio.setup(4 , gpio.IN)
+print(“Press the button”)
+try:
+while True :
+if gpio.input(4)==0:
+print(“Button pressed!”)
+time.sleep(1)
+print(“Press the button (CTRL-C to exit)”)
+except KeyboardInterrupt:
+gpio.cleanup()
+
+
+import RPi.GPIO as gpio #Use the GPIO module of RPi
+import time #Use time module
+gpio.setmode(gpio.BCM) #Works with gpio in BCM(Broadcom chip-specific pi
+n numbers mode)
+trig = 24
+echo = 23
+print(“start ultrasonic sensor”)
+gpio.setup(trig, gpio.OUT) #Set trigger pin to OUT
+gpio.setup(echo, gpio.IN) #Set echo pin to IN
+try: #for Exception
+while True: 
+
+gpio.output(trig, False)
+time.sleep(0.5)
+gpio.output(trig, True)
+time.sleep(0.00001)
+gpio.output(trig, False)
+while gpio.input(echo) == 0:
+pulse_start = time.time() #return the time since January 1, 1970
+while gpio.input(echo) == 1:
+pulse_end = time.time() #return the time since January 1, 1970
+pulse_duration = pulse_end - pulse_start
+distance = pulse_duration * 17000 #time * speed / 2
+distance = round(distance, 2) #Cut in second decimal place
+print(“Distance: ”, distance, “cm”)
+except:
+gpio.cleanup()
+
+
+/* ultrasonic.c */
+#include <stdio.h>
+#include <wiringPi.h>
+#define TRIG 5
+#define ECHO 4
+int main(void)
+{
+long distance = 0, startTime, travelTime;
+if (wiringPiSetup() == -1) {
+return 1;
+}
+pinMode(TRIG, OUTPUT);
+pinMode(ECHO, INPUT);
+
+while (1) {
+digitalWrite(TRIG, LOW);
+usleep(2);
+digitalWrite(TRIG, HIGH);
+usleep(20);
+digitalWrite(TRIG, LOW);
+while (digitalRead(ECHO) == LOW);
+startTime = micros();
+while (digitalRead(ECHO) == HIGH);
+travelTime = micros() - startTime;
+distance = travelTime / 58;
+printf(“Distance: %ld\n”, distance);
+delay(100);
+}
+}
